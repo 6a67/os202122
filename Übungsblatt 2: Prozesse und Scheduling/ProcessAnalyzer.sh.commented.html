@@ -1,0 +1,47 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">#!/bin/bash
+
+
+
+# ZombieSpawner im Hintergrund starten
+./ZombieSpawner &amp;
+<span style="color:red;font-weight:bold;">0.5P</span>
+# 1 Sekunde warten
+sleep 1
+<span style="color:red;font-weight:bold;">0.5P</span>
+exec 3&gt;&amp;1 &gt; process.log
+proc=&quot;$(ps -e -o &#39;stat= pid= command=&#39;)&quot;
+# Zustand: Z (&Uuml;berschrift ausgeben, gefolgt von Name, PID und Zustand aller Zombie Prozesse)
+
+echo &quot;Zustand: Zombie&quot;
+echo &quot;$proc&quot; | grep &#39;^Z&#39;
+
+
+# Zustand: I (&Uuml;berschrift ausgeben, gefolgt von Name, PID und Zustand aller Idle Prozesse)
+
+echo &quot;Zustand: Sleep&quot;
+echo &quot;$proc&quot; | grep &#39;^S&#39;
+echo &quot;$proc&quot; | grep &#39;^D&#39;
+
+
+echo &quot;Zustand: Idle&quot;
+echo &quot;$proc&quot; | grep &#39;^I&#39;
+
+echo &quot;Zustand: Gestoppt&quot;
+echo &quot;$proc&quot; | grep &#39;^T&#39;
+echo &quot;$proc&quot; | grep &#39;^t&#39;
+
+echo &quot;Zustand: Tot&quot;
+echo &quot;$proc&quot; | grep &#39;^X&#39;
+
+<span style="color:red;font-weight:bold;">2.5P
+Ihr habt den Zustand &quot;Running&quot; vergessen.</span>
+# auf Beendigung von ZombieSpawner warten
+
+wait
+<span style="color:red;font-weight:bold;">0.5P</span>
+# Ende
+echo &quot;ProcessAnalyzer has finished its work!&quot; &gt;&amp;3
+<span style="color:red;font-weight:bold;">MD</span>
+
+</span></pre></body></html>

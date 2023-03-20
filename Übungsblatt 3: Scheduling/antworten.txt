@@ -1,0 +1,43 @@
+Aufgabe 1:
+
+1. Zombies sind Prozesse die beendet worden sind, die aber noch nicht aus der Prozessliste gelöscht werden können, weil der Elternprozess noch den Rückgabewert abrufen muss.
+Verwaiste Prozesse sind Prozesse, bei denen die Elternprozesse beendet wurden. Solche Prozesse werden automatisch zu Kindern von init.
+
+2. Bei globalen Variablen hat static zur Folge, dass die Variable nur in dieser einzelnen Datei sichtbar ist.
+Bei lokalen Variablen heißt es, dass sie nur einmal initialisiert werden und über mehrere Funktionsaufrufe ihren Wert behalten.
+
+
+3. nice führt grep mit einem nice-Wert von 15 mehr, also mit einer niedrigeren Priorität, aus.
+Möglicherweise muss grep sehr große Datenmengen durchsuchen und braucht dafür viel CPU-Leistung, der Rest des Systems soll davon aber nicht so start beeinträchtigt werden.
+
+
+
+Aufgabe 2:
+
+1. 
+
++---+------------------------------+
+| A |------------------------------|
+| B |CE-CE-CE-CE-CE-CE-CE-CE-CE-CE-|
+| C |-CCECCECCECCECCECCECCECCECCECC|
++---+------------------------------+
+
+2. Es kommt vor, dass Prozesse mit langen CPU-Bursts niemals Rechenzeit bekommen.
+
+
+
+Aufgabe 3:
+
+1.
+A = 10ms
+B = 2ms
+C = 5ms
+D = 2ms
+
+Prozesse B und D sind nach 2 ms und Prozess C nach 5 ms mit ihrem CPU-Burst fertig und machen dann einen IO-Burst.
+Wenn die Zeitscheibenlänge genau der CPU-Burst-Zeit entschpricht, können die Prozesse direkt dannach ihren IO-Burst beginnen. Wenn die Zeitscheibe aber länger ist, bleibt der Rest der Zeitscheibe für den Prozess ungenutzt, wenn der den IO-Burst anfängt. Deshalb ist für A auch die Zeitscheibenlänge von 10ms optimal, da alle anderen Prozesse die Zeitscheibe nicht voll ausnutzen können, A mit einem langen CPU-Burst aber schon.
+
+
+2. Je kleiner die Zeitscheiben gewählt werden, desto öfter muss zwischen den Prozessen gewechselt werden. der Prozesswechsel ist aber eine Operation, die aufwändig ist. Wenn man also die Zeitscheibe kleiner wählt, erhöht man die Rechenleistung, die allein für das Prozessmanagement genutzt wird und keinem Programm zugute kommt.
+
+

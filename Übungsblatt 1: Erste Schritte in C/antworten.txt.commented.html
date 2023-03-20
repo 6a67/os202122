@@ -1,0 +1,42 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">
+Aufgabe 1:
+
+1. Mit man kann man die Handbuchseiten von Programmen und Funktionen nachlesen.
+Mit man printf bekommt man die Seite f&uuml;r das Programm printf, mit man 3 printf bekommt man die Seite f&uuml;r die Funktion printf.
+
+
+2. chmod u=rw,g=r,o= geheim.txt
+
+
+3. gcc -o programm programm.c
+
+4. find <span style="background-color:yellow;">-depth</span> -mmin -10 -iname &quot;*.c&quot; <span style="background-color:yellow;">~</span>
+<span style="color:red;font-weight:bold;">-depth ist nicht zwingend n&ouml;tig.</span>
+<span style="color:red;font-weight:bold;">Das Startverzeichnis (~) muss vor den Suchmustern stehen. (-0.5P)</span>
+
+<span style="color:red;font-weight:bold;">4.5P</span>
+
+Aufgabe 2:
+
+1.
+Die Ausgabe ist:
+Hallo vom 6-seitigen W&uuml;rfel!
+Hallo vom 6-seitigen W&uuml;rfel!
+
+Die Funktion d20 funktioniert nicht, weil der Wert der Struktur als Parameter &uuml;bergeben wird, num_faces also nur in der Kopie in d20 auf 20 gesetzt wird.<span style="color:red;font-weight:bold;"> -&gt; Genau, Stichwort: call by value</span>
+
+2.
+flag ist im Datensegment, weil es eine globale Variable ist und bereits vor dem Programmstart einen Wert haben soll. ergebnis ist im BSS-Segment, weil es es eine globale Variable ist und noch keinen Wert zum Anfang hat. <span style="color:red;font-weight:bold;">-&gt; uninitialisiert vs. initialisiert</span>
+
+i und j sind auf dem Stack, weil sie lokale Variablen sind.
+
+flag und ergebnis sind nicht im gleichen segment, weil flag <span style="background-color:yellow;">lokal</span> und ergebnis <span style="background-color:yellow;">global</span> ist.
+<span style="color:red;font-weight:bold;">Nein, sowohl flag als auch ergebnis sind global. Wie ihr oben richtig erkl&auml;rt habt, ist flag initialisiert und deshalb muss ein Wert im Datensegment gespeichert werden. ergebnis ist hingegen nicht initialisiert. (-1P)</span>
+
+<span style="color:red;font-weight:bold;">2P
+//MK
+</span>
+
+</span></pre>
+</body></html>

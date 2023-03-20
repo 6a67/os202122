@@ -1,0 +1,89 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">#define _GNU_SOURCE
+#define _POSIX_SOURCE
+
+
+
+#include&lt;stdio.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;sys/wait.h&gt;
+#include&lt;pwd.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;errno.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;stdbool.h&gt;
+#include&lt;limits.h&gt;
+#include&lt;string.h&gt;
+
+
+
+int main(void) {
+    
+    struct passwd *p = getpwuid(getuid());
+    if (p == NULL) {
+        perror(&quot;getpwuid&quot;);
+    }
+    char hostname[HOST_NAME_MAX];
+    if (gethostname(hostname, 100) == -1) {
+        perror(&quot;gethostname&quot;);
+        exit(EXIT_FAILURE);
+    }
+    
+    
+    
+    char cmd[256];
+    char arg[256];
+    while (true) {
+        char cwd[PATH_MAX];
+        if (getcwd(cwd, PATH_MAX) == NULL) {
+            perror(&quot;getcwd&quot;);
+            exit(EXIT_FAILURE);
+        }
+        printf(&quot;%s@%s %s $ &quot;, p-&gt;pw_name, hostname, cwd);
+        errno = 0;
+        int ret = scanf(&quot;%255s %255s&quot;, cmd, arg);
+        if (ret == 2) {
+            if (strncmp(&quot;exit&quot;, cmd, 256) == 0) {
+                char* end;
+                long exitcode = strtol(arg, &amp;end, 10);
+                if (*end == &#39;\0&#39;) {
+                    exit(exitcode);
+                } else {
+                    printf(&quot;Der exit code muss eine Zahl sein\n&quot;);
+                }
+                continue;
+            }
+            if (strncmp(&quot;cd&quot;, cmd, 256) == 0) {
+                if (chdir(arg) == -1) {
+                    perror(&quot;chdir&quot;);
+                }
+                continue;
+            }
+            pid_t ret = fork();
+            if (ret == -1) {
+                perror(&quot;fork&quot;);
+                exit(EXIT_FAILURE);
+            }
+            if (ret == 0) {
+                execlp(cmd, cmd, arg, NULL);
+                perror(&quot;execpl&quot;);
+            } else {
+                wait(NULL);
+            }
+        } else {
+            if (errno != 0) {
+                perror(&quot;scanf&quot;);
+                exit(EXIT_FAILURE);
+            }
+            printf(&quot;Es muss genau ein Kommando und ein Parameter angegeben werden.\n&quot;);
+        }
+    }
+    return EXIT_SUCCESS;
+}
+
+
+<span style="color:red;font-weight:bold;">//MK</span>
+
+
+</span></pre>
+</body></html>

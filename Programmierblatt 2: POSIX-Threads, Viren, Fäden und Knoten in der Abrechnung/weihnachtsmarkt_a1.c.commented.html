@@ -1,0 +1,65 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">#include &lt;stdio.h&gt;
+
+
+int konto = 3000;
+
+// die Buchungen als Hilfsfunktion machen, weil der Prozess f&uuml;r alle Arbeitsgruppen gleich ist
+void buchung(const char* name ,int delta) {
+    int lkonto = konto;
+    printf(&quot;%s: Kontostand vorher: %d\n&quot;, name, lkonto);
+    lkonto += delta;
+    printf(&quot;%s: Kontostand nachher: %d\n&quot;, name, lkonto);
+    konto = lkonto;
+}
+
+
+
+void* verpflegung(void* arg) {
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Verpflegung&quot;, -400);
+    }
+    return NULL;
+}
+
+void* eisflaeche(void* arg) {
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Eisfl&auml;che&quot;, <span style="background-color:yellow;">-400</span>); <span style="color:red;font-weight:bold;">// Das sollten 600 sein</span>
+    }
+    return NULL;
+}
+
+
+void* sonstiges(void* arg) {
+    int* betrag = arg;
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Sonstiges&quot;, - *betrag);
+    }
+    return NULL;
+}
+
+void* finanzierung(void* arg) {
+    for (int i = 0;i&lt;5;i++) {
+        buchung(&quot;Finanzierung&quot;, 2500);
+    }
+    return NULL;
+}
+<span style="color:red;font-weight:bold;">// + 2.5 P Transaktionen fast alle korrekt</span>
+int main(void) {
+    verpflegung(NULL);
+    eisflaeche(NULL);
+    int betrag = 600;
+    sonstiges(&amp;betrag); 
+    finanzierung(NULL);
+    printf(&quot;Endkontostand: %d\n&quot;, konto);
+    
+    return 0;
+}
+</span></pre>
+<p>
+	<span style="color:red;font-weight:bold;">// + 1 P main function richtig</span></p>
+<p>
+	<span style="color:red;font-weight:bold;">// 3.5 P</span></p>
+<p>
+	<span style="color:red;font-weight:bold;">//MD</span></p>
+</body></html>

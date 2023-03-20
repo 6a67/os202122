@@ -1,0 +1,137 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;limits.h&gt;
+#include &lt;dirent.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+
+#include &quot;vorgabe.h&quot;
+
+
+fileInfoList list;
+
+
+void traverse(char* path) {
+    DIR* dir = opendir(path);
+    if (dir == NULL) {
+        perror(&quot;opendir&quot;);
+        exit(1);
+    }
+    struct dirent* e;
+    errno = 0; <span style="color:red;font-weight:bold;">// Es sollte nicht notwendig sein, die ganze Zeit errno manuell zu resetten</span>
+    while ((e = readdir(dir)) != NULL) {
+        if (strcmp(e-&gt;d_name, &quot;.&quot;) == 0 || strcmp(e-&gt;d_name, &quot;..&quot;) == 0) {
+            errno = 0;
+            continue;
+        }
+        
+        char* newpath;
+        if (asprintf(&amp;newpath, &quot;%s/%s&quot;, path, e-&gt;d_name) == -1) {
+            perror(&quot;asprintf&quot;);
+            exit(1);
+        }
+        
+        struct stat s;
+        if (stat(newpath, &amp;s) != 0) {
+            perror(&quot;stat&quot;);
+            free(newpath);
+            exit(1);
+        }
+        
+        if (S_ISREG(s.st_mode)) {
+            fileInfo* info = malloc(sizeof(fileInfo));
+            if (info == NULL) {
+                perror(&quot;malloc&quot;);
+                free(newpath);
+                exit(1);
+            }
+            info-&gt;path = strdup(newpath);
+            if (info-&gt;path == NULL) {
+                perror(&quot;strdup&quot;);
+                free(newpath);
+                exit(1);
+            }
+            info-&gt;size = s.st_size;
+            enqueue(&amp;list, info);
+        }
+        
+        if (S_ISDIR(s.st_mode)) {
+            traverse(newpath);
+        }
+        
+        free(newpath);
+        
+        errno = 0;
+    }
+    if (errno != 0) { <span style="color:red;font-weight:bold;">// Ihr resettet errno direkt am Ende der Schleife, und &uuml;berpr&uuml;ft es dann. Da sollte eigentlich klar sein, was passiert.</span>
+        perror(&quot;readdir&quot;);
+        exit(1);
+    }
+    if (closedir(dir) != 0) {
+        perror(&quot;closedir&quot;);
+        exit(1);
+    }
+}
+
+
+
+
+
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        printf(&quot;Das einzige Argument muss ein Pfad zum komprimierenden Verzeichnis sein.\n&quot;);
+        exit(1);
+    }
+    
+    
+    {
+        char* path = strdup(argv[1]); // Es kann schon sein, dass ein Pfade nur
+        if (path == NULL) {
+            perror(&quot;strdup&quot;);
+            exit(1);
+        }
+        char* tok = strtok(path, &quot;/&quot;);
+        if (tok == NULL) {
+            printf(&quot;Ung&uuml;ltiger Pfad.\n&quot;);
+            free(path);
+            exit(1);
+        }
+        do {
+            if (strcmp(&quot;.&quot;, tok) == 0 || strcmp(&quot;..&quot;, tok) == 0) {
+                printf(&quot;Ung&uuml;ltiger Pfad.\n&quot;);
+                free(path);
+                exit(1);
+            }
+        } while ((tok = strtok(NULL, &quot;/&quot;)) != NULL);
+        free(path);
+    }
+    
+    // damit der Einfachheit halber auch Namen mit / hinten dran angenommen werden<span style="color:red;font-weight:bold;"> // Das sollte man auf jeden Fall k&ouml;nnen, wenn man mit Verzeichnissen arbeitet</span>
+    if (argv[1][strlen(argv[1])-1] == &#39;/&#39;) {
+        argv[1][strlen(argv[1])-1] = &#39;\0&#39;;
+    }
+    
+    init(&amp;list);
+    
+    traverse(argv[1]);
+    
+    fileInfo* info;
+    while ((info = dequeue(&amp;list)) != NULL) {
+        printf(&quot;%s: %ld bytes\n&quot;, info-&gt;path, info-&gt;size);
+        free(info-&gt;path);
+        free(info);
+    }
+    
+    
+    return 0;
+}
+
+</span></pre>
+<p>
+	<span style="color:red;font-weight:bold;">// MD 7 P</span></p>
+</body></html>

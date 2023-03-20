@@ -1,0 +1,260 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">
+// damit es bei usleep keine implicit function declaration Warnung gibt
+#define _DEFAULT_SOURCE
+
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;semaphore.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdint.h&gt;
+
+
+int lese;
+int schreibe;
+
+
+bool boss = false;
+
+
+pthread_mutex_t booleanlock = PTHREAD_MUTEX_INITIALIZER;
+
+void try_lock(pthread_mutex_t* m) {
+    if (pthread_mutex_lock(m) != 0) {
+        perror(&quot;Fehler bei pthread_lock&quot;);
+        exit(1);
+    }
+}
+
+void try_unlock(pthread_mutex_t* m) {
+    if (pthread_mutex_unlock(m) != 0) {
+        perror(&quot;Fehler bei pthread_unlock&quot;);
+        exit(1);
+    }
+}
+
+pthread_t mainthread;
+
+bool willgabel = false;
+
+
+bool hatlinks = false;
+bool hatrechts = false;
+
+sem_t* links = SEM_FAILED;
+sem_t* rechts = SEM_FAILED;
+
+void sig(int num) {
+    if (num == SIGINT) {
+        if (hatlinks) {
+            sem_post(links);
+        }
+        if (hatrechts) {
+            sem_post(rechts);
+        }
+        sem_close(links);
+        sem_close(rechts);
+        exit(0);
+    }
+}
+
+bool lastblocked = false;
+
+
+void* watcher(void* data) {
+    if (boss) {
+        while (true) {
+            uint8_t data;
+            try_lock(&amp;booleanlock);
+            if (willgabel) {
+                if (lastblocked) {
+                    data = 1;
+                    // pipes blockieren immer bis mindestens 1 byte an daten da ist. Weil wir nur 1 byte brauchen, m&uuml;ssen wir nicht auf die Anzahl geschriebener oder gelesener bytes checken
+                    if (write(schreibe, &amp;data, 1) == -1) {
+                        perror(&quot;Fehler beim schreiben der pipe&quot;);
+                        exit(1);
+                    }
+                    if (read(lese, &amp;data, 1) == -1) {
+                        perror(&quot;Fehler beim lesen von der pipe&quot;);
+                        exit(1);
+                    }
+                    if (data == 1) {
+                        pthread_kill(mainthread, SIGALRM);
+                    }
+                } else {
+                    lastblocked = true;
+                }
+            } else {
+                lastblocked = false;
+            }
+            try_unlock(&amp;booleanlock);
+            sleep(1);
+        }
+    } else {
+        while (true) {
+            uint8_t data;
+            if (read(lese, &amp;data, 1) == -1) {
+                perror(&quot;Fehler beim lesen von der pipe&quot;);
+                exit(1);
+            }
+            if (data == 1){
+                try_lock(&amp;booleanlock);
+                if (willgabel) {
+                    data = 1;
+                } else {
+                    data = 0;
+                }
+                try_unlock(&amp;booleanlock);
+            }
+            if (write(schreibe, &amp;data, 1) == -1) {
+                perror(&quot;Fehler beim schreiben der pipe&quot;);
+                exit(1);
+            }
+        }
+    }
+}
+
+int main(int argc, char* argv[]) {
+    mainthread = pthread_self();
+    
+    srand(getpid());
+    if (argc != 5 &amp;&amp; argc != 6) {
+        puts(&quot;Es m&uuml;ssen die linke und rechte Gabel und die lese und schreib-Pipe als Argumente gegeben werden!\n&quot;);
+        puts(&quot;Dannach kann auch noch istboss benutzt werden, um den Philosophen zum Boss zu machen.\n&quot;);
+        exit(1);
+    }
+    
+    if (argc == 6 &amp;&amp; strcmp(argv[5], &quot;istboss&quot;) == 0) {
+        boss = true;
+    }
+    
+    links = sem_open(argv[1], O_RDWR);
+    rechts = sem_open(argv[2], O_RDWR);
+    if (links == SEM_FAILED || rechts == SEM_FAILED) {
+        perror(&quot;Konnte eine der Gabeln nicht &ouml;ffnen&quot;);
+        exit(1);
+    }
+    // beim Boss schreibeende zuerst &ouml;ffnen, damit es kein Deadlock gibt
+    if (boss) {
+        schreibe = open(argv[4], O_WRONLY);
+        lese = open(argv[3], O_RDONLY);
+    } else {
+        lese = open(argv[3], O_RDONLY);
+        schreibe = open(argv[4], O_WRONLY);
+    }
+    if (lese == -1 || schreibe == -1) {
+        perror(&quot;Konnte eine der Pipes nicht &ouml;ffnen&quot;);
+        exit(1);
+    }
+    struct sigaction action = {};
+    action.sa_handler = sig;
+    action.sa_flags = 0;
+    
+    sigaction(SIGINT, &amp;action, NULL);
+    sigaction(SIGALRM, &amp;action, NULL);
+    
+    
+    pthread_t watch;
+    if (pthread_create(&amp;watch, NULL, watcher, NULL) != 0) {
+        perror(&quot;Konnte watcher thread nicht erstellen&quot;);
+        exit(1);
+    }
+    // am Anfang einmal schlafen, weil die Prozesse durch die Pipes synchronisiert sind
+    usleep(100000 * (rand() % 10));
+    
+    while (true) {
+        
+        printf(&quot;Philosoph %d will die linke Gabel nehmen.\n&quot;, getpid());
+        
+        try_lock(&amp;booleanlock);
+        willgabel = true;
+        try_unlock(&amp;booleanlock);
+        
+        if (sem_wait(links) != 0) {
+            if (errno == EINTR) {
+                try_lock(&amp;booleanlock);
+                willgabel = false;
+                try_unlock(&amp;booleanlock);
+                continue;
+            }
+            perror(&quot;Fehler bei sem_wait&quot;);
+            exit(1);
+        }
+        hatlinks = true;
+        
+        try_lock(&amp;booleanlock);
+        willgabel = false;
+        try_unlock(&amp;booleanlock);
+        
+        printf(&quot;Philosoph %d hat die linke Gabel.\n&quot;, getpid());
+        
+        // Das hier kann verringert werden, damit es nicht zu schnell zum Deadlock kommt
+        usleep( 3000 * (rand() % 100));
+        
+        printf(&quot;Philosoph %d will die rechte Gabel nehmen.\n&quot;, getpid());
+        
+        try_lock(&amp;booleanlock);
+        willgabel = true;
+        try_unlock(&amp;booleanlock);
+        
+        if (sem_wait(rechts) != 0) {
+            printf(&quot;Philosoph %d wartet nicht mehr und legt die linke Gabel weg.\n&quot;, getpid());
+            if (errno == EINTR) {
+                if (sem_post(links) != 0) {
+                    perror(&quot;Fehler bei sem_post&quot;);
+                    exit(1);
+                };
+                try_lock(&amp;booleanlock);
+                willgabel = false;
+                try_unlock(&amp;booleanlock);
+                hatlinks = false;
+                continue;
+            }
+            perror(&quot;Fehler bei sem_wait&quot;);
+            exit(1);
+        };
+        hatrechts = true;
+        
+        try_lock(&amp;booleanlock);
+        willgabel = false;
+        try_unlock(&amp;booleanlock);
+        
+        printf(&quot;Philosoph %d hat die rechte Gabel.\n&quot;, getpid());
+        
+        printf(&quot;Philosoph %d isst.\n&quot;, getpid());
+        usleep(100000);
+        
+        printf(&quot;Philosoph %d legt die rechte Gabel weg.\n&quot;, getpid());
+        if (sem_post(rechts) != 0) {
+            perror(&quot;Fehler bei sem_post&quot;);
+            exit(1);
+        };
+        hatrechts = false;
+        
+        printf(&quot;Philosoph %d legt die linke Gabel weg.\n&quot;, getpid());
+        if (sem_post(links) != 0) {
+            perror(&quot;Fehler bei sem_post&quot;);
+            exit(1);
+        };
+        hatlinks = false;
+        
+        printf(&quot;Philosoph %d denkt.\n&quot;, getpid());
+        
+        usleep(1000 * (rand() % 10));
+    }
+    return 0;
+}
+
+</span></pre>
+<p>
+	<span style="color:red;font-weight:bold;">// 3 P</span></p>
+<p>
+	<span style="color:red;font-weight:bold;">// MD</span></p>
+</body></html>

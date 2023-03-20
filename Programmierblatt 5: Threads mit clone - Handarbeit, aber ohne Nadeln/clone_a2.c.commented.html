@@ -1,0 +1,70 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">#include &lt;sched.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+
+
+int thread_func(void* arg) {
+    int res = 0;
+    for (int i = 1; i&lt;=5; i++) {
+        res += i*i;
+    }
+    usleep(2000000);
+    return res;
+}
+
+
+#define STACK_SIZE 8192
+
+
+
+int main(int argc, char** argv) {
+    
+    
+    void* stack = malloc(STACK_SIZE);
+    if (stack == NULL) {
+        puts(&quot;Malloc des Stack fehlgeschlagen&quot;);
+        exit(1);
+    }
+    
+    memset(stack, &#39;A&#39;, STACK_SIZE); <span style="color:red;font-weight:bold;">// das war nicht gefordert, ihr solltet die Hexa 0xAA in den Stack schreiben -0.5 P</span>
+    
+    int tid = clone(thread_func, stack+STACK_SIZE, CLONE_VM | SIGCHLD, NULL);
+    if (tid == -1) {
+        perror(&quot;clone&quot;);
+        exit(1);
+    }
+    printf(&quot;tid: %d\n&quot;, tid);
+    
+    
+    
+    int status;
+    if (waitpid(tid, &amp;status, 0) == -1) {
+        perror(&quot;waitpid&quot;);
+        exit(1);
+    }
+    printf(&quot;Ergebnis: %d\n&quot;, WEXITSTATUS(status));
+    
+    
+    char* stackchars = stack;
+    for (int i = 0; i &lt; STACK_SIZE; i++) {
+        if (stackchars[i] != &#39;A&#39;) {
+            printf(&quot;Stack gebraucht: %d\n&quot;,STACK_SIZE-<span style="background-color:yellow;">i+1</span>); <span style="color:red;font-weight:bold;">// Die +1 sollte nicht notwendig sein, so rechnet ihr unn&ouml;tig einen drauf</span>
+            return 0;
+        }
+    }
+    
+    
+    return 0;
+}
+
+</span></pre>
+<p>
+	<span style="color:red;font-weight:bold;">// 2.5 P</span></p>
+<p>
+	<span style="color:red;font-weight:bold;">// MD</span></p>
+</body></html>

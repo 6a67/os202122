@@ -1,0 +1,96 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">Aufgabe 1: 
+
+1.
+Weiche Echtzeitanforderungen bestehen z.b. beim abspielen von Musik, weil bei ungenauem Timing die T&ouml;ne verzerrt werden k&ouml;nnten oder der Ton kurze Zeit ganz aussetzt. Bei Videokonferenzen braucht man auch Echtzeitanforderungen, damit das Bild auch gleichzeitig mit dem Ton angezeigt wird.
+
+Harte Echtzeitanforderungen gibt es z.b. bei Autocomputern mit Bremsassistent oder Lenkassistent, wo zu sp&auml;te Ausf&uuml;hrung eventuell sogar zum Unfall f&uuml;hren k&ouml;nnte. Oder beim balancieren eines Roboters auf 2 Beinen beim gehen, wo der Roboter bei zu sp&auml;ter Reaktion umfallen k&ouml;nnte.
+<span style="color:red;font-weight:bold;">+ 1 P
+</span>
+
+2.
+Fork erstellt einen neuen Prozess mit einem eigenen Adressraum, File descriptor table, Signal-Handler.
+pthread_create erstell einen leightgewichtigen Prozess (Thread) bei dem das alles mit dem Elternprozes geteilt ist, bis auf den Stack.
+
+<span style="color:red;font-weight:bold;">+ 1 P</span>
+
+
+
+3.
+Mit einem Mutex wird garantiert, dass nur ein einziger Thread oder Prozess einen kritischen Abschnitt betritt.
+Semaphoren sind flexibler, man kann einstellen, wie viele Threads die Semaphore auf einmal halten durfen.
+Eine Semaphore, die nur von einem Thread gehalten werden darf funktioniert also wie ein Mutex.
+<span style="color:red;font-weight:bold;">+ 1 P
+3 P</span>
+
+
+Aufgabe 2:
+
+
+1.
+Die genutzte Auslastung eines Tasks im worst-case ist die WCET durch die Periode.
+
+A verbraucht 1/3 der Auslastung.
+B verbraucht 2/4 der Auslastung.
+C verbraucht 2/12 der auslastung
+
+1/3 = 4/12
+2/4 = 6/12
+4/12 + 6/12 + 2/12 = 12/12
+
+Die worst-case Auslastung des Systems ist also bei 100%.
+Nach der 70%-Regel lassen sich die Deadlines nicht mehr garantieren.
+<span style="color:red;font-weight:bold;">+ 1 P</span>
+
+2.
+
++---+-------------------------------+ C: Task wird ausgef&uuml;hrt
+| A | C . .|C . .|C . .|C . .|C . . | .: Task ist beendet
+| B | - C C .|C C . .|C - C .|- C C | -: Task ist laufbereit
+| C | - - - - - - - C - . . C|- - - | |: Deadline
++---+-------------------------------+ $: Verpasste Deadline
+<span style="color:red;font-weight:bold;">+ 3 P</span>
+3.
+
+Die Aussage &auml;ndert sich nicht, denn ein Prozess der alle 6 Zeiteinheiten ausgef&uuml;hrt werden soll und ein Rechenzeit von 1 hat verbraucht genauso viel Auslastung wie einer der 2 braucht und alle 12 Zeiteinheiten ausgef&uuml;hrt wird.
+<span style="color:red;font-weight:bold;">+ 1 P</span>
+
+4.
+
++---+-------------------------------+ C: Task wird ausgef&uuml;hrt
+| A | C . .|C . .|C . .|C . .|C . . | .: Task ist beendet
+| B | - C C .|C C . .|C - C .|- C C | -: Task ist laufbereit
+| D | - - - - - -$- C . . . <span style="background-color:yellow;">.</span>|- - - | |: Deadline
++---+-------------------------------+ $: Verpasste Deadline
+<span style="color:red;font-weight:bold;">Wenn euer Prozess D nach missen der Deadline aufh&ouml;rt zu arbeiten, ist eure Schedule in Ordnung.</span>
+
+Die geringere Periode f&uuml;hrt dazu, dass D eine Deadline verpasst, weil in den ersten 6 Zeiteinheiten keine Rechenzeit f&uuml;r D frei ist.
+
+<span style="color:red;font-weight:bold;">+ 2 P
+7 P</span>
+
+
+Aufgabe 3:
+
+
+1. 
+Da die Auslastung nicht &uuml;ber 100% ist, kann es einen EDF-Schdule geben, der keine Deadlines verpasst, es ist aber nicht garantiert.
+
+<span style="color:red;font-weight:bold;">+ 1 P</span>
+
+
+2.
+
++---+-------------------------------+ C: Task wird ausgef&uuml;hrt
+| A | C . .|- C .|- C .|- - C|C . . | .: Task ist beendet
+| B | - C C .|- C C .|- C C .|- C C | -: Task ist laufbereit
+| D | - - - C . .|- - C . . .|- - - | |: Deadline
++---+-------------------------------+ $: Verpasste Deadline
+
+Mit EDF ist es m&ouml;glich, zumindest in den ersten 15 Zeiteinheiten keine Deadline zu verpassen.
+
+<span style="color:red;font-weight:bold;">+ 5 P
+6 P
+MD
+</span>
+</span></pre></body></html>

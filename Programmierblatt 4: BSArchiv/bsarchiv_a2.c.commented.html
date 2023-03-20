@@ -1,0 +1,239 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;limits.h&gt;
+#include &lt;dirent.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/sendfile.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdint.h&gt;
+
+#include &quot;vorgabe.h&quot;
+
+
+fileInfoList list;
+
+
+#define ARCHIVE_MAGIC &quot;BSARCH&quot;
+
+
+void traverse(char* path) {
+    DIR* dir = opendir(path);
+    if (dir == NULL) {
+        perror(&quot;opendir&quot;);
+        exit(1);
+    }
+    struct dirent* e;
+    errno = 0;
+    while ((e = readdir(dir)) != NULL) {
+        if (strcmp(e-&gt;d_name, &quot;.&quot;) == 0 || strcmp(e-&gt;d_name, &quot;..&quot;) == 0) {
+            errno = 0;
+            continue;
+        }
+        
+        char* newpath;
+        if (asprintf(&amp;newpath, &quot;%s/%s&quot;, path, e-&gt;d_name) == -1) {
+            perror(&quot;asprintf&quot;);
+            exit(1);
+        }
+        
+        struct stat s;
+        if (stat(newpath, &amp;s) != 0) {
+            perror(&quot;stat&quot;);
+            free(newpath);
+            exit(1);
+        }
+        
+        if (S_ISREG(s.st_mode)) {
+            fileInfo* info = malloc(sizeof(fileInfo));
+            if (info == NULL) {
+                perror(&quot;malloc&quot;);
+                free(newpath);
+                exit(1);
+            }
+            info-&gt;path = strdup(newpath);
+            if (info-&gt;path == NULL) {
+                perror(&quot;strdup&quot;);
+                free(newpath);
+                exit(1);
+            }
+            info-&gt;size = s.st_size;
+            enqueue(&amp;list, info);
+        }
+        
+        if (S_ISDIR(s.st_mode)) {
+            traverse(newpath);
+        }
+        
+        free(newpath);
+        
+        errno = 0;
+    }
+    if (errno != 0) {
+        perror(&quot;readdir&quot;);
+        exit(1);
+    }
+    if (closedir(dir) != 0) {
+        perror(&quot;closedir&quot;);
+        exit(1);
+    }
+}
+
+void writeBuffer(int fd, void* buffer, int len) {
+    while (len &gt; 0) {
+        int ret = write(fd, buffer, len);
+        if (ret == -1) {
+            perror(&quot;write&quot;);
+            exit(1);
+        }
+        len -= ret;
+    }
+}
+
+
+
+
+
+int main(int argc, char** argv) {
+    if (argc != 3) {
+        printf(&quot;Das erste Argument muss der Archivname und das zweite Argument ein Pfad zum komprimierenden Verzeichnis sein.\n&quot;);
+        exit(1);
+    }
+    
+    {
+        char* path = strdup(argv[2]);
+        if (path == NULL) {
+            perror(&quot;strdup&quot;);
+            exit(1);
+        }
+        char* tok = strtok(path, &quot;/&quot;);
+        if (tok == NULL) {
+            printf(&quot;Ung&uuml;ltiger Pfad.\n&quot;);
+            free(path);
+            exit(1);
+        }
+        do {
+            if (strcmp(&quot;.&quot;, tok) == 0 || strcmp(&quot;..&quot;, tok) == 0) {
+                printf(&quot;Ung&uuml;ltiger Pfad.\n&quot;);
+                free(path);
+                exit(1);
+            }
+        } while ((tok = strtok(NULL, &quot;/&quot;)) != NULL);
+        free(path);
+    }
+    
+    // damit der Einfachheit halber auch Namen mit / hinten dran angenommen werden
+    if (argv[2][strlen(argv[2])-1] == &#39;/&#39;) {
+        argv[2][strlen(argv[2])-1] = &#39;\0&#39;;
+    }
+    
+    init(&amp;list);
+    
+    traverse(argv[2]);
+    
+    int archive = open(argv[1], O_CREAT | O_WRONLY);
+    if (archive == -1) {
+        perror(&quot;Fehler beim Archivdatei &ouml;ffnen&quot;);
+        exit(1);
+    }
+    
+    writeBuffer(archive, ARCHIVE_MAGIC, strlen(ARCHIVE_MAGIC));
+    
+    uint16_t version = 1;
+    writeBuffer(archive, &amp;version, sizeof(version));
+    
+    errno = 0;
+    uint64_t toc = lseek(archive, 0, SEEK_CUR) + sizeof(toc);
+    if (errno != 0) {
+        perror(&quot;lseek&quot;);
+        close(archive);
+        exit(1);
+    }
+    
+    writeBuffer(archive, &amp;toc, sizeof(toc));
+    
+    uint64_t toc_size = 0;
+    writeBuffer(archive, &amp;toc_size, sizeof(toc_size));
+    
+    
+    uint64_t startoffset = 0;
+    fileInfo* info = list.head;
+    if (info != NULL) {
+        do {
+            printf(&quot;%s: %ld bytes\n&quot;, info-&gt;path, info-&gt;size);
+            
+            uint16_t pathlength = strlen(info-&gt;path)+1;
+            writeBuffer(archive, &amp;pathlength, sizeof(pathlength));
+            toc_size += sizeof(pathlength);
+            writeBuffer(archive, info-&gt;path, pathlength);
+            toc_size += pathlength;
+            
+            uint64_t length = info-&gt;size;
+            writeBuffer(archive, &amp;length, sizeof(length));
+            toc_size += sizeof(length);
+            
+            writeBuffer(archive, &amp;startoffset, sizeof(startoffset));
+            toc_size += sizeof(startoffset);
+            
+            startoffset += info-&gt;size;
+        } while ((info = info-&gt;next) != NULL);
+    }
+    
+    
+    // Gr&ouml;&szlig;e des Inhaltsverzeichnisses schreiben
+    
+    errno = 0;
+    lseek(archive, toc, SEEK_SET);
+    if (errno != 0) {
+        perror(&quot;lseek&quot;);
+        close(archive);
+        exit(1);
+    }
+    
+    writeBuffer(archive, &amp;toc_size, sizeof(toc_size));
+    
+    
+    errno = 0;
+    lseek(archive, 0, SEEK_END);
+    if (errno != 0) {
+        perror(&quot;lseek&quot;);
+        close(archive);
+        exit(1);
+    }
+    
+    while ((info = dequeue(&amp;list)) != NULL) {
+        int file = open(info-&gt;path, O_RDONLY);
+        if (file == -1) {
+            perror(&quot;open&quot;);
+            close(archive);
+            exit(1);
+        }
+        
+        if (sendfile(archive, file, NULL, info-&gt;size) == -1) { <span style="color:red;font-weight:bold;">// Sendfile gibt nicht nur etwas zur&uuml;ck, wenn es einen Error hat, sondern generell die Menge an Bytes die noch nicht gesendet wurde. Hier sollte man so vorgehen, wie ihr es in eurer Funktion &quot;writeBuffer&quot; getan habt -0.5 P</span>
+            perror(&quot;sendfile&quot;);
+            close(file);
+            close(archive);
+            exit(1);
+        }
+        
+        close(file);
+        
+        free(info-&gt;path);
+        free(info);
+    }
+    
+    
+    close(archive);
+    
+    return 0;
+}
+
+</span></pre>
+<p>
+	<span style="color:red;font-weight:bold;">// 5.5 P MD</span></p>
+</body></html>

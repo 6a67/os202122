@@ -1,0 +1,157 @@
+Aufgabe 1
+
+1. Bei einem Deadlock warten die Prozesse mit Betriebssystemmitteln aufeinander, sodass die Prozesse nicht mehr als Runnable gelten und damit auch keine Prozessorauslastung verursachen.
+Bei einem Livelock wird aktives warten benutzt, wodurch eine hohe Prozessorauslastung entsteht, die das gesammte System in mitleidenschaft ziehen kann, was schlimmer ist als ein Deadlock.
+
+2.
+
+synchron:
+Vorteile:
+- Das Erhalten der Nachricht ist immer gewähleistet, wenn der Aufruf fehlerfrei zurückkehrt ist.
+- Die Nachricht muss nicht zwischengespeichert werden.
+Nachteile:
+- Beim Warten auf eine Nachricht bzw. beim Warten, dass eine Nachricht empfangen wird, kann der Prozess nichts anderes tun.
+
+
+asynchron:
+Vorteile:
+- Prozesse können andere Dinge tun und dazwischen auf neue Nachrichten prüfen bzw. senden.
+Nachteile:
+- Die Nachrichten müssen immer zwischengespeichert werden.
+- Es ist für den Sender nicht klar, wann die Nachricht empfangen wird, wenn der Empfänger nicht eine entsprechende Nachricht zurücksendet.
+
+
+3. Der gewünschte Effekt ist, dass das Signal SIGKILL ignoriert wird, der Prozess also nicht von Außen beendet werden kann.
+Unter Linux kann SIGKILL nicht ignoriert werden, der Aufruf tut also nichts.
+
+
+
+
+Aufgabe 2
+
+1. 
+
+Die 4 Ressourcen sind B1 bis B4, die Prozesse P1 bis P3.
+B1 -> P1
+B2 -> P1
+B3 -> P2
+P3 -> B4
+In dieser Situation hätten P3 und P2 nicht mehr genügend Resourcen, um weitermachen zu können.
+
+2.
+Es kann kein Deadlock entstehen, weil immer genug Ressoucen da sind, sodass mindestens ein Prozess seine Arbeit erledingen kann und damit weitere Ressoucen frei werden. Wenn alle 3 prozesse jeweils eine Ressource benutzen ist immer noch eine frei, damit ein Prozess seine Arbeit beenden kann.
+
+
+
+
+
+
+Aufgabe 3
+
+1.
+
+Frei:
+A 1
+B 5
+C 2
+D 0
+
+P0 kann laufen.
+
+Frei:
+A 1
+B 5
+C 3
+D 2
+
+
+P3 kann laufen.
+
+Frei:
+A 1
+B 11
+C 6
+D 4
+
+
+P1, P2, P4 können laufen, P2 gewählt.
+
+Frei:
+A 2
+B 14
+C 11
+D 8
+
+
+P1, P4 können laufen, P1 gewählt.
+
+Frei:
+A 3
+B 14
+C 11
+D 8
+
+
+P4 kann laufen.
+
+
+Frei:
+A 3
+B 14
+C 12
+D 12
+
+
+2.
+
+
+
+Frei:
+A 1
+B 5
+C 2
+D 0
+
+P0 kann laufen.
+
+Frei:
+A 1
+B 5
+C 3
+D 2
+
+
+P3 kann laufen.
+
+Frei:
+A 1
+B 11
+C 6
+D 4
+
+
+P2, P4 können laufen, P2 gewählt.
+
+Frei:
+A 2
+B 14
+C 11
+D 8
+
+
+P4 kann laufen.
+
+Frei:
+A 2
+B 14
+C 12
+D 12
+
+P1 kann laufen.
+
+Frei:
+A 3
+B 14
+C 12
+D 12
+ 

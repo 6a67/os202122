@@ -1,0 +1,110 @@
+Aufgabe 1
+
+1. 
+
+statische Platzierung:
+Das Betriebssystem und jedes Programm hat einen vordefinierten Speicherbereich, den es benutzen kann.
+
+
+Bitlisten für freien Speicher:
+Der Speicher wird in gleich große Abschnitte aufgeteilt und es gibt eine bitliste, die für jeden Block markiert, ob er belegt ist.
+
+
+
+Verkettete Liste für freien Speicher:
+Freie Speicherbereiche werden in einer verketteten Liste gespeichert.
+
+
+Verkettete Liste für freien Speicher im freien Speicher:
+Freie Speicherbereiche werden in einer verketteten Liste gespeichert, wobei die Listenelemente sich selbst im freien Speicher befinden..
+
+
+Buddy:
+Man fängt mit einem großen Block an 2^n bytes Speicher an und unterteilt den Block bei einer Speicheranfrage in 2
+Blöcke von 2^n-1 bytes. Dann unterteilt man einen der beiden Block wieder in 2 Blöcke von 2^n-2 bytes usw. solange, bis die Speicheranfrage nicht mehr in den Block passen würde. Dann belegt man einen der neuen kleinsten Blöcke. Beim Freigeben von Speicher wird geschaut, ob der gleichgroße Speicherblock, der durch das Aufteilen entstanden ist frei ist. Wenn ja, werden die glöcke wieder zu einem Zusammengeschlossen und es wird wieder geschaut, ob der Geschwisterblock frei ist und das gleiche getan, bis der andere Block nicht mehr frei ist oder man wieder beim Anfangsblock von 2^n bytes angekommen ist.
+
+
+2.
+
+Externer Verschnitt ist wenn es Speicherbereiche gibt, die zwar frei sind, aber zu klein, als dass sie Speicheranforderungen erfüllen könnten.
+
+Interner Verschnitt ist zusätzlicher eigentlich freie Speicher, der aber zu einem belegten Block gezählt wird, wie z.B. beim Buddy-Verfahren, wenn die Speicheranforderung nicht eine zweierpotenz ist.
+
+
+
+3.
+In beiden Fällen muss der Compiler entsprechende Informationen mit dem Code liefern, die das Binden möglich machen, und der Programmlader muss das Binden unterstützen.
+
+Beim statischen Binden werden die im Code referenzierten Adressen einmal beim Laden auf die Programmposition im Speicher angepasst.
+
+Beim dynamischen binden wird nur indirekt auf Adressen zugegriffen, weshalb man das Programm auch zur Laufzeit im Speicher verschieben kann, solange man die Adressen aktualisiert.
+
+
+
+
+Aufgabe 2
+
+
+1.
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 293.  Da die höchstwertigen 8 Bit den Index in der Segmenttabelle angeben, kann eine Speicheranfrage auch maximal 0xFFFFFF groß sein. Somit wäre ein größeres Segment nicht nutzbar 30 31
+A  A  A  A  B  B  -  -  C  C  C  C  C  C  C  C  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  B  B  -  -  C  C  C  C  C  C  C  C  D  D  D  D  -  -  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  B  B  E  -  C  C  C  C  C  C  C  C  D  D  D  D  -  -  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  B  B  E  -  C  C  C  C  C  C  C  C  D  D  D  D  F  F  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  -  -  E  -  C  C  C  C  C  C  C  C  D  D  D  D  F  F  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  -  -  E  -  C  C  C  C  C  C  C  C  D  D  D  D  F  F  -  -  G  G  G  G  -  -  -  -
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  -  -  E  -  C  C  C  C  C  C  C  C  -  -  -  -  F  F  -  -  G  G  G  G  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31*
+A  A  A  A  -  -  -  -  C  C  C  C  C  C  C  C  -  -  -  -  F  F  -  -  G  G  G  G  -  -  -  -
+
+2.
+2 MiB bei C + 1 MiB bei D + 1 MiB bei G = 4 MiB
+Für A und B ist nicht bekannt, ob die belegte Blockgröße auch genau mit der Speicheranfrage übereinstimmt.
+
+
+Aufgabe 3
+
+1.
+
+a)
+Index: 0
+phys: 0x0000bfcf
+
+b)
+Index: 28
+phys: SPEICHERVERLETZUNG
+
+c)
+Index: 3
+phys: SPEICHERVERLETZUNG
+
+d)
+Index: 1
+phys: 0xc001cafe
+
+
+2. Enthält die Tabelle nur 29 Einträge so ergibt sich 29 * 0xFFFFFF = 0x1cffffe3 = 486539235
+
+3. Da die höchstwertigen 8 Bit den Index in der Segmenttabelle angeben, kann eine Speicheranfrage auch maximal 0xFFFFFF groß sein. Somit wäre ein größeres Segment nicht nutzbar
+

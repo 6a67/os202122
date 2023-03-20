@@ -1,0 +1,120 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">Aufgabe 1
+
+1. 
+
+statische Platzierung:
+Das Betriebssystem und jedes Programm hat einen vordefinierten Speicherbereich, den es benutzen kann.
+
+
+Bitlisten f&uuml;r freien Speicher:
+Der Speicher wird in gleich gro&szlig;e Abschnitte aufgeteilt und es gibt eine bitliste, die f&uuml;r jeden Block markiert, ob er belegt ist.
+
+
+
+Verkettete Liste f&uuml;r freien Speicher:
+Freie Speicherbereiche werden in einer verketteten Liste gespeichert.
+
+
+Verkettete Liste f&uuml;r freien Speicher im freien Speicher:
+Freie Speicherbereiche werden in einer verketteten Liste gespeichert, wobei die Listenelemente sich selbst im freien Speicher befinden..
+<span style="color:red;font-weight:bold;">Gefragt waren Platzierungsstrategien aus der Vorlesung, also First Fit/Best Fit/Worst Fit/etc. Ihr habt hier Methoden aufgelistet, die definieren, WIE Daten gespeichert werden sollen.</span>
+
+Buddy:
+Man f&auml;ngt mit einem gro&szlig;en Block an 2^n bytes Speicher an und unterteilt den Block bei einer Speicheranfrage in 2
+Bl&ouml;cke von 2^n-1 bytes. Dann unterteilt man einen der beiden Block wieder in 2 Bl&ouml;cke von 2^n-2 bytes usw. solange, bis die Speicheranfrage nicht mehr in den Block passen w&uuml;rde. Dann belegt man einen der neuen kleinsten Bl&ouml;cke. Beim Freigeben von Speicher wird geschaut, ob der gleichgro&szlig;e Speicherblock, der durch das Aufteilen entstanden ist frei ist. Wenn ja, werden die gl&ouml;cke wieder zu einem Zusammengeschlossen und es wird wieder geschaut, ob der Geschwisterblock frei ist und das gleiche getan, bis der andere Block nicht mehr frei ist oder man wieder beim Anfangsblock von 2^n bytes angekommen ist.
+
+
+2.
+
+Externer Verschnitt ist wenn es Speicherbereiche gibt, die zwar frei sind, aber zu klein, als dass sie Speicheranforderungen erf&uuml;llen k&ouml;nnten.
+
+Interner Verschnitt ist zus&auml;tzlicher eigentlich freie Speicher, der aber zu einem belegten Block gez&auml;hlt wird, wie z.B. beim Buddy-Verfahren, wenn die Speicheranforderung nicht eine zweierpotenz ist.
+<span style="color:red;font-weight:bold;">+ 1 P</span>
+
+
+3.
+In beiden F&auml;llen muss der Compiler entsprechende Informationen mit dem Code liefern, die das Binden m&ouml;glich machen, und der Programmlader muss das Binden unterst&uuml;tzen.
+
+Beim statischen Binden werden die im Code referenzierten Adressen einmal beim Laden auf die Programmposition im Speicher angepasst.
+
+Beim dynamischen binden wird nur indirekt auf Adressen zugegriffen, weshalb man das Programm auch zur Laufzeit im Speicher verschieben kann, solange man die Adressen aktualisiert.
+
+<span style="color:red;font-weight:bold;">+ 1 P
+2 P</span>
+
+
+Aufgabe 2
+
+
+1.
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 293.  <span style="background-color:yellow;">Da die h&ouml;chstwertigen 8 Bit den Index in der Segmenttabelle angeben, kann eine Speicheranfrage auch maximal 0xFFFFFF gro&szlig; sein. Somit w&auml;re ein gr&ouml;&szlig;eres Segment nicht nutzbar 30 31</span>
+A  A  A  A  B  B  -  -  C  C  C  C  C  C  C  C  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  B  B  -  -  C  C  C  C  C  C  C  C  D  D  D  D  -  -  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  B  B  E  -  C  C  C  C  C  C  C  C  D  D  D  D  -  -  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  B  B  E  -  C  C  C  C  C  C  C  C  D  D  D  D  F  F  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  -  -  E  -  C  C  C  C  C  C  C  C  D  D  D  D  F  F  -  -  -  -  -  -  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  -  -  E  -  C  C  C  C  C  C  C  C  D  D  D  D  F  F  -  -  G  G  G  G  -  -  -  -
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+A  A  A  A  -  -  E  -  C  C  C  C  C  C  C  C  -  -  -  -  F  F  -  -  G  G  G  G  -  -  -  -
+
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31*
+A  A  A  A  -  -  -  -  C  C  C  C  C  C  C  C  -  -  -  -  F  F  -  -  G  G  G  G  -  -  -  -
+<span style="color:red;font-weight:bold;">+ 5 P</span>
+2.
+2 MiB bei C + 1 MiB bei D + 1 MiB bei G = 4 MiB
+F&uuml;r A und B ist nicht bekannt, ob die belegte Blockgr&ouml;&szlig;e auch genau mit der Speicheranfrage &uuml;bereinstimmt.
+<span style="color:red;font-weight:bold;">+ 1 P
+6 P</span>
+
+Aufgabe 3
+
+1.
+
+a)
+Index: 0
+phys: 0x0000bfcf
+
+b)
+Index: 28
+phys: SPEICHERVERLETZUNG
+<span style="color:red;font-weight:bold;"><span style="color:red;font-weight:bold;">Nein, die Adresse berechnet sich aus: 0xEB00DA und das ist kleiner als 0xFFFFFF.</span></span>
+
+c)
+Index: 3
+phys: SPEICHERVERLETZUNG
+
+d)
+Index: 1
+phys: 0xc001cafe
+<span style="color:red;font-weight:bold;">+ 3 P</span>
+
+2. Enth&auml;lt die Tabelle nur 29 Eintr&auml;ge so ergibt sich 29 * 0xFFFFFF = 0x1cffffe3 = 486539235
+<span style="color:red;font-weight:bold;">Ihr solltet es nicht f&uuml;r die Tabelle, sondern f&uuml;r die angegebene Art der Adressabbildung (32-Bit Adressen, dafvon 8-Bit f&uuml;r die Indizes) berechnen,</span>
+3. Da die h&ouml;chstwertigen 8 Bit den Index in der Segmenttabelle angeben, kann eine Speicheranfrage auch maximal 0xFFFFFF gro&szlig; sein. Somit w&auml;re ein gr&ouml;&szlig;eres Segment nicht nutzbar
+<span style="color:red;font-weight:bold;">+ 2 P
+5 P
+MD
+</span>
+
+
+</span></pre></body></html>

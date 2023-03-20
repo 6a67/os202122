@@ -1,0 +1,92 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;errno.h&gt;
+
+int konto = 3000;
+
+// die Buchungen als Hilfsfunktion machen, weil der Prozess f&uuml;r alle Arbeitsgruppen gleich ist
+void buchung(const char* name ,int delta, int wait) {
+    int lkonto = konto;
+    printf(&quot;%s: Kontostand vorher: %d\n&quot;, name, lkonto);
+    sleep(wait);
+    lkonto += delta;
+    printf(&quot;%s: Kontostand nachher: %d\n&quot;, name, lkonto);
+    konto = lkonto;
+}
+
+
+
+void* verpflegung(void* arg) {
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Verpflegung&quot;, -400, 2);
+    }
+    return NULL;
+}
+
+void* eisflaeche(void* arg) {
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Eisfl&auml;che&quot;, -400, 3);
+    }
+    return NULL;
+}
+
+
+void* sonstiges(void* arg) {
+    int* betrag = arg;
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Sonstiges&quot;, - *betrag, 3);
+    }
+    return NULL;
+}
+
+void* finanzierung(void* arg) {
+    for (int i = 0;i&lt;5;i++) {
+        buchung(&quot;Finanzierung&quot;, 2500, 8);
+    }
+    return NULL;
+}
+<span style="color:red;font-weight:bold;">// + 1 P sleep &uuml;berall richtig</span>
+int main(void) {
+    
+    int betrag = 600;
+    
+    pthread_t threads[4];
+    if (pthread_create(&amp;threads[0], NULL, verpflegung, NULL) != 0) {
+        perror(&quot;konnte thread nicht erstellen&quot;); <span style="color:red;font-weight:bold;">// pthreard_x setzt kein errno, perror zeigt nicht die richtiger Fehlermeldung an</span>
+        return 1;
+    }
+    if (pthread_create(&amp;threads[1], NULL, eisflaeche, NULL) != 0) {
+        perror(&quot;konnte thread nicht erstellen&quot;);
+        return 1;
+    }
+    if (pthread_create(&amp;threads[2], NULL, sonstiges, &amp;betrag) != 0) {
+        perror(&quot;konnte thread nicht erstellen&quot;);
+        return 1;
+    }
+    if (pthread_create(&amp;threads[3], NULL, finanzierung, NULL) != 0) {
+        perror(&quot;konnte thread nicht erstellen&quot;);
+        return 1;
+    }
+    
+    for (int i = 0;i&lt;4;i++) {
+        if (pthread_join(threads[i], NULL) != 0) {
+            perror(&quot;konnte nicht auf thread warten&quot;);
+            return 1;
+        }
+    }
+    
+    printf(&quot;Endkontostand: %d\n&quot;, konto);
+    
+    return 0;
+}
+<span style="color:red;font-weight:bold;">// + 1.5 P create und join richtig
+// 2.5P
+// MD
+</span>
+
+
+
+</span></pre>
+</body></html>

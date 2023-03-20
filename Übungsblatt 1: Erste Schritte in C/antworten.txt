@@ -1,0 +1,33 @@
+
+Aufgabe 1:
+
+1. Mit man kann man die Handbuchseiten von Programmen und Funktionen nachlesen.
+Mit man printf bekommt man die Seite für das Programm printf, mit man 3 printf bekommt man die Seite für die Funktion printf.
+
+
+2. chmod u=rw,g=r,o= geheim.txt
+
+
+3. gcc -o programm programm.c
+
+4. find -depth -mmin -10 -iname "*.c" ~
+
+
+
+Aufgabe 2:
+
+1.
+Die Ausgabe ist:
+Hallo vom 6-seitigen Würfel!
+Hallo vom 6-seitigen Würfel!
+
+Die Funktion d20 funktioniert nicht, weil der Wert der Struktur als Parameter übergeben wird, num_faces also nur in der Kopie in d20 auf 20 gesetzt wird.
+
+2.
+flag ist im Datensegment, weil es eine globale Variable ist und bereits vor dem Programmstart einen Wert haben soll. ergebnis ist im BSS-Segment, weil es es eine globale Variable ist und noch keinen Wert zum Anfang hat.
+
+i und j sind auf dem Stack, weil sie lokale Variablen sind.
+
+flag und ergebnis sind nicht im gleichen segment, weil flag lokal und ergebnis global ist.
+
+

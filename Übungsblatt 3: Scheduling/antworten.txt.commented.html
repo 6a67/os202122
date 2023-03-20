@@ -1,0 +1,46 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">Aufgabe 1:
+
+1. Zombies sind Prozesse die beendet worden sind, die aber noch nicht aus der Prozessliste gel&ouml;scht werden k&ouml;nnen, weil der Elternprozess noch den R&uuml;ckgabewert abrufen muss.
+Verwaiste Prozesse sind Prozesse, bei denen die Elternprozesse beendet wurden. Solche Prozesse werden automatisch zu Kindern von init.
+<span style="color:red;font-weight:bold;">1P</span>
+2. Bei globalen Variablen hat static zur Folge, dass die Variable nur in dieser einzelnen Datei sichtbar ist.
+Bei lokalen Variablen hei&szlig;t es, dass sie nur einmal initialisiert werden und &uuml;ber mehrere Funktionsaufrufe ihren Wert behalten.
+<span style="color:red;font-weight:bold;">1P</span>
+3. nice f&uuml;hrt grep mit einem nice-Wert von 15 mehr, also mit einer niedrigeren Priorit&auml;t, aus.
+M&ouml;glicherweise muss grep sehr gro&szlig;e Datenmengen durchsuchen und braucht daf&uuml;r viel CPU-Leistung, der Rest des Systems soll davon aber nicht so start beeintr&auml;chtigt werden.
+<span style="color:red;font-weight:bold;">1P</span>
+
+
+Aufgabe 2:
+
+1. 
+
++---+------------------------------+
+| A |------------------------------|
+| B |CE-CE-CE-CE-CE-CE-CE-CE-CE-CE-|
+| C |-CCECCECCECCECCECCECCECCECCECC|
++---+------------------------------+
+<span style="color:red;font-weight:bold;">4P</span>
+2. Es kommt vor, dass Prozesse mit langen CPU-Bursts niemals Rechenzeit bekommen.
+<span style="color:red;font-weight:bold;">1P</span>
+
+
+Aufgabe 3:
+
+1.
+A = 10ms
+B = 2ms
+C = 5ms
+D = 2ms
+
+Prozesse B und D sind nach 2 ms und Prozess C nach 5 ms mit ihrem CPU-Burst fertig und machen dann einen IO-Burst.
+Wenn die Zeitscheibenl&auml;nge genau der CPU-Burst-Zeit entschpricht, k&ouml;nnen die Prozesse direkt dannach ihren IO-Burst beginnen. Wenn die Zeitscheibe aber l&auml;nger ist, bleibt der Rest der Zeitscheibe f&uuml;r den Prozess ungenutzt, wenn der den IO-Burst anf&auml;ngt. Deshalb ist f&uuml;r A auch die Zeitscheibenl&auml;nge von 10ms optimal, da alle anderen Prozesse die Zeitscheibe nicht voll ausnutzen k&ouml;nnen, A mit einem langen CPU-Burst aber schon.
+<span style="color:red;font-weight:bold;">2P</span>
+
+2. Je kleiner die Zeitscheiben gew&auml;hlt werden, desto &ouml;fter muss zwischen den Prozessen gewechselt werden. der Prozesswechsel ist aber eine Operation, die aufw&auml;ndig ist. Wenn man also die Zeitscheibe kleiner w&auml;hlt, erh&ouml;ht man die Rechenleistung, die allein f&uuml;r das Prozessmanagement genutzt wird und keinem Programm zugute kommt.
+<span style="color:red;font-weight:bold;">1P
+MD
+</span>
+
+</span></pre></body></html>

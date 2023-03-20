@@ -1,0 +1,86 @@
+Aufgabe 1)
+    1.  I/O-Ports:
+            Nur Zugriff mit speziellen Maschieneninstruktionen, was einen speziefischeren Zugriff ermöglicht
+
+        Memory-Mapped-I/O:
+            Zugriff mit allgemeinen Instruktionen möglich, was die Implementierung meist vereinfacht
+
+    2.  Vorteile:
+            Die CPU muss sich nicht weiter um den Datentransfer kümmern, was zu einer Parallelisierung führt und somit kann die CPU in der Zeit des Transfers andere Dinge tun
+
+        Nachteil:
+            DMA ändert den Cache nicht. Somit muss die CPU zuerst Änderungen am Cache in den Hauptspeicher schreiben und danach wissen, dass sich der Speicherinhalt im Hauptspeicher geändert hat und dementsprechend den Cache anpassen.
+            DMA geht am Speicherschutz vorbei, was bedeutet, dass per DMA Dinge an Stellen in den Hauptspeicher geschrieben werden könnten, an denen sie gar nicht stehen sollten, falls z. B. die Festplatte fehlerhaft Instruktionen
+
+Aufgabe 2)
+    1.  Da bei FAT die Einträge auf 8.3 limitiert sind, wird VFAT als Erweiterung von für dieses Dateisystem angewandt. Dabei wird ein Eintrag mit einem Alias gespeichert, damit Systeme, welche diese Erweiterung nicht unterstützen weiterhin auf die Dateien zugreifen können. Die VFAT speziefischen Einträge sind dabei dann wie folgt aufgebaut:
+        Byte 1: Nummer des Eintrages. Vorletztes Bit ist gesetzt, wenn es der letzte Eintrag ist. Das letzte Bit ist gesetzt, wenn die Datei gelöscht wurde bzw. überschrieben werden kann
+        Byte 2-11:  5 Zeichen des Namens (Unicode)
+        Byte 12:    Attribute wie z. B. Read-Only, Hidden, etc.
+        Byte 13:    Flag Byte
+        Byte 14:    Meist einfach Null
+        Byte 15:    Checksumme des 8.3er Eintrages, um sicher zu stellen, dass der Eintrag auf die richtige Datei zeigt
+        Byte 16-27: 6 Zeichen des Namens (Unicode)
+        Byte 28:    Meist einfach Null
+        Byte 29-32: 2 Zeichen des Namens (Unicode)
+
+Aufgabe 3)
+    1.  a)  Ohne Puffer
+            200 000 000 * 9 ms + 200 000 000 * 1 ms = 2 000 000 000 ms = 23 d + 3 h + 33 min + 20 s
+
+        b)  Mit einem Puffer
+            9 ms + 5 μs + 1 ms + (8 ms + 5 μs) * 199 999 999 + 1 ms * 199 999 999 = 1 801 000 001 ms = 20 d + 20 h + 16 min + 40.001 s
+
+        c)  Wechselpuffer
+            9 ms * 200 000 000 + 5 μs + 1 ms ≈ 1 800 000 001 ms = 20 d + 20 h + 1.005 ms
+
+    2.  Das Programm müsste so geschrieben werden, dass immer die Blöcke die hintereinander liegen gelesen werden, damit sich die Zeit von 9 ms deutlich verringert, da nicht mehr so viel Zeit für die Positionierung und Rotationslatenz benötigt wird
+
+    3.  Unter der Annahme, dass alle Blöcke direkt hintereinander liegen, wodurch sich der Schreibkopf nun kaum bewegen muss, ergibt sich folgendes:
+        Festplatte: 4 ms Datentransfer (+ 5 ms für den ersten Zugriff)
+
+        a)  Ohne Puffer
+            9 ms + (4 ms + 1 ms) * 199 999 999 + 1 ms = 1 000 000 005 ms = 11 d + 13 h + 46 min + 40.005 s
+
+        b)  Mit einem Puffer
+            9 ms + (4 ms + 5 μs) * 199 999 999 + 5 μs + 1 ms = 801 000 006 ms = 9 d + 6 h + 30 min + 6 ms
+
+        c) Wechselpuffer
+            9 ms + 4 ms * 199 999 999 + 5 μs + 1 ms ≈ 800 000 006 ms = 9 d + 6 h + 13 min + 20.006005 s
+
+Aufgabe 4)
+    1.  Spur	Zeitpunkt	Ankuftszeit	    Wartezeit
+        12	    0	        12	            12
+        6	    0	        6	            6
+        4	    0	        4	            4
+        8	    0	        8	            8
+        24	    10	        24	            14
+        16	    10	        16	            6
+        9	    10	        39	            29
+        21	    10	        21	            11
+        13	    20	        35	            15
+        10	    20	        38	            18
+        5	    20	        43	            23
+        7	    20	        41	            21
+
+        Reihenfolge: 4, 6, 8, 12, 16, 21, 24, 13, 10, 9, 7, 5
+        Mittlere Wartezeit: (4 + 6 + 8 + 12 + 6 + 11 + 14 + 15 + 18 + 29 + 21 + 23) / 12 ≈ 13.92
+    
+    2.  Spur	Zeitpunkt	Ankuftszeit	    Wartezeit
+        12	    0	        12	            12
+        6	    0	        6	            6
+        4	    0	        4	            4
+        8	    0	        8	            8
+        24	    10	        30	            20
+        16	    10	        22	            12
+        9	    10	        15	            5
+        21	    10	        27	            17
+        13	    20	        41	            21
+        10	    20	        44	            24
+        5	    20	        48	            28
+        7	    20	        46	            26
+
+        Reihenfolge: 4, 6, 8, 12, 9, 16, 21, 24, 13, 10, 7, 5
+        Mittlere Wartezeit: (4 + 6 + 8 + 12 + 5 + 12 + 17 + 20 + 21 + 24 + 26 + 28) / 12 = 15.25
+
+        Die Wartezeit für 9 hat sich deutlich verringert, allerdings ist dafür die mittlere Wartezeit sowie die gesamt Dauer angestiegen

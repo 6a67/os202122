@@ -1,0 +1,82 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">
+Aufgabe 1:
+
+1.
+Bevor eine App beendet wird kann sie dem Activity Manager Daten mitgeben, die sie zum wiederherstellen ihres Zustands braucht.
+Diese Daten werden dann beim erneuten starten mitgegeben, sodass die App den Zustand wiederherstellen kann.
+<span style="color:red;font-weight:bold;">+ 1 P</span>
+2.
+In /etc/passwd werden die Benutzernamen Benutzer und Gruppen-Ids, Home-Verzeichnissen und start-Shells zugeordnet.
+In /etc/shadow sind die Hashes der Passw&ouml;rter gespeichert.
+/etc/shadow ist f&uuml;r normale Benutzer nicht lesbar, damit ein Nutzer nicht mit brute-force des Passwort von z.b. root herausfinden und somit die Passw&ouml;rter umgehen kann.
+<span style="color:red;font-weight:bold;">+ 2 P</span>
+3.
+Wenn ein setuid-Programm ausgef&uuml;hrt wird hat es die uid des Benutzers, der es gestartet hat, aber die effektive uid des Benutzers, dem die Datei geh&ouml;rt. Au&szlig;erdem k&ouml;nnen root-Programme ihre uid und euid manipulieren.
+<span style="color:red;font-weight:bold;">+ 2 P
+5 P</span>
+
+Aufgabe 2:
+
+
+1.
+Pstat = 1V * 0.010A = 0.01W
+Pdyn = 0.0000000015F * 1V^2 * 300000000Hz =  0.45W
+<span style="color:red;font-weight:bold;">Und wo ist Pgesamt?</span>
+
+2.
+Pstat = 1.2V * 0.010A = 0.012W
+Pdyn = 0.0000000015F * 1.2V^2 * 800000000Hz =  1.728W
+
+3.
+Pstat = 1.3V * 0.010A = 0.013W
+Pdyn = 0.0000000015F * 1.3V^2 * 1000000000Hz =  2.535W
+
+<span style="color:red;font-weight:bold;">2 P</span>
+
+Aufgabe 3:
+
+1.
+
+Die Auslastung f&uuml;r CPU0 ohne T ist 220.
+Damit hat CPU1 von den little-Kernen mehr Kapazit&auml;t zur verf&uuml;gung und w&uuml;rde f&uuml;r die little-Kerne zur Migration gew&auml;hlt werden.
+
+Bei den Big-Kernen hat CPU2 noch mehr Kapazit&auml;t zur Verf&uuml;gung, also w&uuml;rde der Task beim Verschieben auf die big-Kerne zu CPU2 gehen.
+<span style="color:red;font-weight:bold;">+ 1 P</span>
+2.
+
+Task bleibt auf dem selben Kern:
+
+CPU0: 370 / 615 * 180 = 108 <span style="color:red;font-weight:bold;">Hier einfach alle Kommazahlen wegrunden verf&auml;lscht das Ergebnis.</span>
+CPU1: 200 / 615 * 180 = 59
+CPU2: 700 / 768 * 300 = 273
+CPU3: 750 / 768 * 300 = 293
+Gesamt: 733
+
+Task zu CPU1:
+CPU0: 220 / 615 * 180 = 64
+CPU1: 350 / 615 * 180 = 102
+CPU2: 700 / 768 * 300 = 273
+CPU3: 750 / 768 * 300 = 293
+Gesamt: 732
+
+
+Task zu CPU2:
+
+CPU0: 220 / 230 * 50 = 18 <span style="color:red;font-weight:bold;">Wie kommt ihr hier auf 18? Das ist mit den beteiligten Zahlen vor dem =-Zeichen komplett unm&ouml;glich.</span>
+CPU1: 200 / 230 * 50 = 16
+CPU2: 850 / 1024 * 400 = 332
+CPU3: 750 / 1024 * 400 = 293
+Gesamt: 659
+
+<span style="color:red;font-weight:bold;">+ 2 P</span>
+
+3.
+T sollte auf CPU2 platziert werden, damit CPU0 und CPU1 auf Leistungpunkt 1 abgesenkt werden k&ouml;nnen um damit Energie zu sparen.
+<span style="color:red;font-weight:bold;">+ 1 P</span>
+<span style="color:red;font-weight:bold;">4 P
+MD </span>
+
+
+
+</span></pre></body></html>

@@ -1,0 +1,57 @@
+
+Aufgabe 1:
+
+1.	du gibt alle Verzeichnisse (welche im Home Verzeichnis liegen) und deren Größe an
+
+	-m gibt die Größe in MB an
+	-d 1 gibt eine Tiefe von 1 an. Also nur Verzeichnisse der Tiefe 0 oder 1 werden beachtet
+
+
+	sort -n sortiert den Standard Input numerisch
+
+	-> Zeigt der Größe nach sortiert (klein zu groß) alle Dirs im Home Verzeichnis in MB an und auch die Größe vom Home Verzeichnis
+
+2. 	echo hallo > ausgabe - schreibt hallo in die Datei ausgabe und überschreibt das, was vorher dort drin war
+	echo hi ho > eingabe - schreibt hi ho in die Datei eingabe und überschreibt das, was vorher dort drin war
+	wc -w - Anzahl der Wörter
+	wc -w < eingabe - Datei eingabe wird über standard input in wc -w gegeben, gibt also 2 zurück
+	wc -w < eingabe >> ausgabe - output von 'wc -w < eingabe' wird an die Datei ausgabe angehangen
+
+
+	Dannach ist der Inhalt von ausgabe:
+	hallo
+	2
+
+
+3. Mit -> kann auf die Variablen in einer Struktur über einen Pointer zugegriffen werden. Mit . wird das gleiche direkt auf einer Struktur getan.
+Es gilt:
+a.b   =  (&a)->b
+a->b  =  (*a).b
+
+
+Aufgabe 2:
+
+1. Der Code führt fork in einer Endloschschleife aus.
+
+
+2. In der ersten Generation gibt es einen Prozess, der fork ausführt.
+damit gibt es in der 2. Generation 2 Prozesse, die beide fork ausführen, dannach sind es 4 Prozesse.
+In der 3. Generation hat man 4 Prozesse, die fork ausführen und hat dannach 8 Prozesse.
+
+In der n-ten Generation gibt es 2^(n-1) Prozesse.
+
+
+
+Aufgabe 3:
+
+1.
+
+Zustände in ps:
+D steht für nicht unterbrechbaren Schlaf.
+S steht für unterbrechbaren Schlaf.
+I steht für Programme in Leerlauf
+T und t stehen für gestoppte Prozesse
+X steht für Tote Prozesse, sollte es niemals geben, denn Tote Prozesse gibt es ja per Definition nicht mehr
+Z steht für Zombie-Prozesse
+
+

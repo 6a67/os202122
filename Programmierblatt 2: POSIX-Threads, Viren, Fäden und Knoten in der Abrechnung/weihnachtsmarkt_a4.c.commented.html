@@ -1,0 +1,122 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;pthread.h&gt;
+
+
+pthread_mutex_t konto_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t positiv = PTHREAD_COND_INITIALIZER; // diese contition wird signalisiert, wenn eine positive Transaktion gemacht wurde
+int konto = 3000;
+
+// die Buchungen als Hilfsfunktion machen, weil der Prozess f&uuml;r alle Arbeitsgruppen gleich ist
+void buchung(const char* name ,int delta, int wait) {
+    if (pthread_mutex_lock(&amp;konto_lock)) {
+        perror(&quot;konnte mutex nicht locken&quot;);
+        exit(1);
+    }
+    if (delta &lt; 0) { // abbuchung
+        while (konto + delta &lt; 0) { // auf h&ouml;heren Kontostand warten
+            printf(&quot;%s: warten auf h&ouml;heren Kontostand\n&quot;, name);
+            pthread_cond_wait(&amp;positiv, &amp;konto_lock);
+        }
+    }
+    int lkonto = konto;
+    printf(&quot;%s: Kontostand vorher: %d\n&quot;, name, lkonto);
+    lkonto += delta;
+    printf(&quot;%s: Kontostand nachher: %d\n&quot;, name, lkonto);
+    konto = lkonto;
+    if (delta &gt; 0) {
+        pthread_cond_broadcast(&amp;positiv); // den anderen bescheid sagen, dass das konto aufgef&uuml;llt ist
+    }
+    if (pthread_mutex_unlock(&amp;konto_lock)) {
+        perror(&quot;konnte mutex nicht unlocken&quot;);
+        exit(1);
+    }
+    sleep(wait);
+}
+<span style="color:red;font-weight:bold;">// + 4 P richtiges blockiern/freigeben von condition</span>
+
+
+void* verpflegung(void* arg) {
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Verpflegung&quot;, -400, 2);
+    }
+    return NULL;
+}
+
+void* eisflaeche(void* arg) {
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Eisfl&auml;che&quot;, -400, 3);
+    }
+    return NULL;
+}
+
+
+void* sonstiges(void* arg) {
+    int* betrag = arg;
+    for (int i = 0;i&lt;10;i++) {
+        buchung(&quot;Sonstiges&quot;, - *betrag, 3);
+    }
+    return NULL;
+}
+
+void* finanzierung(void* arg) {
+    for (int i = 0;i&lt;5;i++) {
+        buchung(&quot;Finanzierung&quot;, 2500, 8);
+    }
+    return NULL;
+}
+
+
+int main(void) {
+    
+    int betrag = 600;
+    
+    pthread_t threads[4];
+    if (pthread_create(&amp;threads[0], NULL, verpflegung, NULL) != 0) {
+        perror(&quot;konnte thread nicht erstellen&quot;);
+        return 1;
+    }
+    if (pthread_create(&amp;threads[1], NULL, eisflaeche, NULL) != 0) {
+        perror(&quot;konnte thread nicht erstellen&quot;);
+        return 1;
+    }
+    if (pthread_create(&amp;threads[2], NULL, sonstiges, &amp;betrag) != 0) {
+        perror(&quot;konnte thread nicht erstellen&quot;);
+        return 1;
+    }
+    if (pthread_create(&amp;threads[3], NULL, finanzierung, NULL) != 0) {
+        perror(&quot;konnte thread nicht erstellen&quot;);
+        return 1;
+    }
+    
+    for (int i = 0;i&lt;4;i++) {
+        if (pthread_join(threads[i], NULL) != 0) {
+            perror(&quot;konnte nicht auf thread warten&quot;);
+            return 1;
+        }
+    }
+    
+    if (pthread_mutex_destroy(&amp;konto_lock) != 0) {
+        perror(&quot;konnte mutex nicht zerst&ouml;ren&quot;);
+        return 1;
+    }
+    
+    if (pthread_cond_destroy(&amp;positiv) != 0) {
+        perror(&quot;konnte condition nicht zerst&ouml;ren&quot;);
+        return 1;
+    }
+<span style="color:red;font-weight:bold;">// + 1 P condition wird richtig zerst&ouml;rt</span>        
+    
+    printf(&quot;Endkontostand: %d\n&quot;, konto);
+    
+    return 0;
+}
+
+
+<span style="color:red;font-weight:bold;">// 5 P
+// MD
+</span>
+
+</span></pre></body></html>

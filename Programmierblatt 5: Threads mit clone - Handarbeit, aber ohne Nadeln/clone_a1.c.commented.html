@@ -1,0 +1,61 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">#include &lt;sched.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+
+
+int thread_func(void* arg) {
+    int res = 0;
+    for (int i = 1; i&lt;=5; i++) {
+        res += i*i;
+    }
+    usleep(2000000); <span style="color:red;font-weight:bold;">// oder einfach, wie in den anderen Aufgaben auch, sleep(2)</span>
+    return res;
+}
+
+
+#define STACK_SIZE 8192
+
+
+
+int main(int argc, char** argv) {
+    
+    
+    void* stack = malloc(STACK_SIZE);
+    if (stack == NULL) {
+        puts(&quot;Malloc des Stack fehlgeschlagen&quot;);
+        exit(1);
+    }
+    
+    int tid = clone(thread_func, <span style="background-color:yellow;">stack+STACK_SIZE</span>, CLONE_VM | SIGCHLD, NULL); <span style="color:red;font-weight:bold;">// Das letzte Element befindet sich an STACK_SIZE -1, ihr seit au&szlig;erhalb von eurem Stack -0.5 P</span>
+    if (tid == -1) {
+        perror(&quot;clone&quot;);
+        exit(1);
+    }
+    printf(&quot;tid: %d\n&quot;, tid);
+    
+    
+    
+    int status;
+    if (waitpid(tid, &amp;status, 0) == -1) {
+        perror(&quot;waitpid&quot;);
+        exit(1);
+    }
+    <span style="color:red;font-weight:bold;">// Ihr m&uuml;sst erst pr&uuml;fen, ob euer Thread richtig beendet wurde mit </span></span><span style="color:red;font-weight:bold;"><code><span class="n">WIFEXITED</span><span class="p">(</span><span class="n">status) -0.5 P</span></code></span><span style="font-family: monospace; font-size:medium;">
+    printf(&quot;Ergebnis: %d\n&quot;, WEXITSTATUS(status));
+    
+    <span style="color:red;font-weight:bold;">// Ihr m&uuml;sst den allokierten Speicher nach der Arbeit auch wieder freigeben - 1 P</span>
+    
+    return 0;
+}
+
+</span></pre>
+<p>
+	<span style="color:red;font-weight:bold;">// 5 P</span></p>
+<p>
+	<span style="color:red;font-weight:bold;">// MD</span></p>
+</body></html>

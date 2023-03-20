@@ -1,0 +1,32 @@
+Aufgabe 1)
+    1.  Wenn ein Prozess beispielsweise bereits auf einer CPU lief, so ist der Cache dieser bereits angewärmt. Somit wäre es vorteilhaft, wenn dieser Prozess danach wieder auf der gleiche CPU laufen würde.
+        Es sollte aber auch keine CPU leer laufen. Hat eine CPU nun z. B. eine kurze Warteschlange, aber eine andere CPU hat für den Prozess ein bereits angewärmten Cache, auf welche soll der Prozess dann plaziert werden?
+        Interrupts sollten gleichmäßig auf den CPUs verteilt werden (z. B. E/A)
+        Nun gibt es nicht immer nur einen Prozess der gerade RUNNING ist, wodurch auch darauf geachtet werden muss, dass keine Race Conditions auftreten
+
+    2.  In einem Multiprozessorsystem lassen sich damit z. B. Prozessoren wecken, welche zuvor Schlafen gelegt wurden
+
+    3.  Exokerne übernehmen nur die Ressourcenpartitionierung des Systems. Nun laufen aber nicht alle Programme direkt auf die Hardware angepasst und benötigen noch speziefische Bibliotheken. So findet dann in dem vom Exokern zugeteilten Bereich ein Bibliotheks-Betriebssystem seine Anwendung
+
+    4.  Vorteile:
+            - Leistungsverbesserung durch Hypercalls
+            - Hardware-Emulation an einigen Stellen nun nicht mehr notwendig
+        
+        Nachteile:
+            - Spezielle Anpassung notwending
+            - Aufwendig
+
+
+Aufgabe 2)
+    Exclusive und Shared könnte man zu einem gemeinsamen Zustand machen. Dadurch würde von I mit einem lokalen Lesezugriff in den Zustand S gegangen werden. Sonst ändert sich nichts weiter.
+    Dadurch ist nun nicht mehr möglich zu zeigen, dass sich der Cache Eintrag ohne Änderungen nicht in dem einen Eintrag befindet, allerdings ist dies nun ein Teil von Shared
+
+
+Aufgabe 3)
+    1.  next zeigt auf nichts und locked ist false
+    2.  next zeigt auf ein struct lock von CPU0. locked ist auf true und das locked von der CPU0 auf false
+    3.  next zeigt nun auf ein struct lock von CPU1. locked ist weiterhin auf true. locked von der CPU0 auf false. next von CPU0 zeigt nun auf CPU1. locked von CPU1 ist auf true
+    4.  gleicher Aufbau wie davor, allerdings zeigt das next aus dem lock nun auf CPU2 und das next aus CPU1 auf CPU2. Für CPU1 und CPU2 ist locked true
+    5.  gleicher Aufbau wie davor, allerdings verschwindet nun das lock von CPU0 und locked von CPU1 wird auf false gesetzt
+    6.  gleicher Aufbau wie davor, allerdings verschwindet nun das lock von CPU1 und locked von CPU2 wird auf false gesetzt
+    7.  das lock von CPU2 verschwindet. Der next Zeiger von dem lock wird nun auf NULL gesetzt und locked wird auf false gesetzt

@@ -1,0 +1,69 @@
+Aufgabe 1
+
+1. Alle Jobs müssen irgendwann fertig sein und das System verlassen.
+
+2. Jobs kommen zufällig und unabhängig voneinander an, mit unbestimmter Größenverteilung.
+Es können 4 Jobs gleichzeitig bearbeitet werden und es können 10 Jobs im System sein.
+Die Jobs werden mit FCFS abgearbeitet.
+
+
+3. Man hat festgestellt, dass eine Pareto-Verteilung die Jobgrößen in einem Unix-System besser abbildet als eine Exponentialverteilung.
+
+
+Aufgabe 2
+
+
+1.
+A: Zwischenankunfstszeiten der Flugzeuge.
+S: Landezeit: Durchschnitt 1.5min
+m: Die Landebahn, es gibt eine.
+B: Die Flugzeuge, die im System sein können.
+K: Die Flugzeuge, die in der Warteschlange sind. In diesem Fall ist die Warteschlange das kreisen in der Luft beim Warten auf einen Landeplatz.
+SD: Abarbeitungsreihenfolge der Flugzeuge. Die Flugzeige landen inder Reihenfolge, in der sie angekommen sind.
+
+
+2.
+
+Bedienkapazität = 1 / Bedienzeit
+Bedienkapazität = 1/ 1.5 = 2/3
+
+E[Tq] = 1/(m-l) - 1/(m)
+3 = 1/(2/3-l) - 1/(2/3)
+l = 4/9
+
+
+
+Aufgabe 3
+
+1.
+
+Die CPU kann 2 Jobs pro Zeiteinheit verarbeiten, wenn mehr kommen wird das system also instabil.
+Das Terminal kann zwar 4 Jobs bearbeiten, aber die CPU würde damit nicht mitkommen.
+Deshalb ist das System am einer Ankunftsrate von 2  instabil.
+
+
+
+2.
+E[T] = E[Tcpu] + E[Tterminal]
+E[T] = 1/(2-1) + 1/(4-1)
+E[T] = 4/3
+
+E[N] = E[Ncpu] + E[Nterminal]
+E[N] = 1*(1/(2-1)) + 1*(1/(4-1)
+E[N] = 4/3
+
+
+
+3.
+E[T] = E[Tcpu] + E[Tterminal]
+E[T] = 1/(3-1) + 1/(3-1)
+E[T] = 1
+
+E[N] = E[Ncpu] + E[Nterminal]
+E[N] = 1*(1/(3-1)) + 1*(1/(3-1)
+E[N] = 1
+
+
+Die neue Konfiguration ist besser, da die CPU nicht mehr zu langsam für das Terminal ist und nun die Überlastungsgrenze bei 3 liegt.
+Außerdem hat sich die durchschnittliche Zeit der Jobs im jystem un 1/3 verkürzt.
+

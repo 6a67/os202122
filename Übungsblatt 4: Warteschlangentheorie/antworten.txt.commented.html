@@ -1,0 +1,81 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">Aufgabe 1
+
+1. Alle Jobs m&uuml;ssen irgendwann fertig sein und das System verlassen.
+<span style="color:red;font-weight:bold;">1P</span>
+2. Jobs kommen zuf&auml;llig <span style="font-family: monospace; font-size:medium;"><span style="color:red;font-weight:bold;">exponentialverteilt </span></span>und unabh&auml;ngig voneinander an, mit unbestimmter Gr&ouml;&szlig;enverteilung.
+Es k&ouml;nnen 4 Jobs gleichzeitig bearbeitet werden und es k&ouml;nnen 10 Jobs im System sein.
+Die Jobs werden mit FCFS abgearbeitet.
+<span style="color:red;font-weight:bold;">Es fehlt: Die Anzahl der Jobs ist unbeschr&auml;nkt.
+0.5P</span>
+
+3. Man hat festgestellt, dass eine Pareto-Verteilung die Jobgr&ouml;&szlig;en in einem Unix-System besser abbildet als eine Exponentialverteilung.
+<span style="color:red;font-weight:bold;">1P
+
+A1: 2.5P</span>
+
+Aufgabe 2
+
+
+1.
+A: Zwischenankunfstszeiten der Flugzeuge.
+S: Landezeit: Durchschnitt 1.5min
+m: Die Landebahn, es gibt eine.
+B: Die Flugzeuge, die im System sein k&ouml;nnen.
+K: Die Flugzeuge, die in der Warteschlange sind. In diesem Fall ist die Warteschlange das kreisen in der Luft beim Warten auf einen Landeplatz.
+SD: Abarbeitungsreihenfolge der Flugzeuge. Die Flugzeige landen inder Reihenfolge, in der sie angekommen sind.
+<span style="color:red;font-weight:bold;">1P</span>
+
+2.
+
+Bedienkapazit&auml;t = 1 / Bedienzeit
+Bedienkapazit&auml;t = 1/ 1.5 = 2/3
+
+E[Tq] = 1/(m-l) - 1/(m)
+3 <span style="background-color:yellow;">=</span> 1/(2/3-l) - 1/(2/3) <span style="color:red;font-weight:bold;">Eigentlich m&uuml;sstet ihr hier </span><span style="color:red;font-weight:bold;">mit einer Ungleichung rechnen, also E[Tq] &lt;= 3</span>
+l <span style="background-color:yellow;">=</span> 4/9
+
+<span style="color:red;font-weight:bold;">3P
+
+A2: 4P</span>
+
+Aufgabe 3
+
+1.
+
+Die CPU kann 2 Jobs pro Zeiteinheit verarbeiten, wenn mehr kommen wird das system also instabil.
+Das Terminal kann zwar 4 Jobs bearbeiten, aber die CPU w&uuml;rde damit nicht mitkommen.
+Deshalb ist das System am einer Ankunftsrate von 2  instabil.
+<span style="color:red;font-weight:bold;">1P</span>
+
+
+2.
+E[T] = E[Tcpu] + E[Tterminal]
+E[T] = 1/(2-1) + 1/(4-1)
+E[T] = 4/3
+
+E[N] = E[Ncpu] + E[Nterminal]
+E[N] = 1*(1/(2-1)) + 1*(1/(4-1)
+E[N] = 4/3
+<span style="color:red;font-weight:bold;">Einfacher w&auml;re es mit Little&#39;s Law</span><span style="color:red;font-weight:bold;"> gewesen: E[N] = 1 * E[T]</span>
+<span style="color:red;font-weight:bold;">:)</span>
+<span style="color:red;font-weight:bold;">4P</span>
+
+3.
+E[T] = E[Tcpu] + E[Tterminal]
+E[T] = 1/(3-1) + 1/(3-1)
+E[T] = 1
+
+E[N] = E[Ncpu] + E[Nterminal]
+E[N] = 1*(1/(3-1)) + 1*(1/(3-1)
+E[N] = 1
+
+
+Die neue Konfiguration ist besser, da die CPU nicht mehr zu langsam f&uuml;r das Terminal ist und nun die &Uuml;berlastungsgrenze bei 3 liegt.
+Au&szlig;erdem hat sich die durchschnittliche Zeit der Jobs im jystem un 1/3 verk&uuml;rzt.
+<span style="color:red;font-weight:bold;">2P
+A3: 7P
+//MK
+</span>
+</span></pre>
+</body></html>

@@ -1,0 +1,59 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">#define _GNU_SOURCE
+#define _POSIX_SOURCE
+
+
+
+#include&lt;stdio.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;pwd.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;errno.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;stdbool.h&gt;
+#include&lt;limits.h&gt;
+
+
+int main(void) {
+    
+    struct passwd *p = getpwuid(getuid());
+    if (p == NULL) {
+        perror(&quot;getpwuid&quot;);<span style="color:red;font-weight:bold;"> Hier solltet ihr auch das Programm beenden, da ihr sonst weiter unten den Nullpointer p dereferenziert. (-0.5P)</span>
+    }
+    char hostname[HOST_NAME_MAX];
+    if (gethostname(hostname, <span style="background-color:yellow;">100</span>) == -1) {<span style="color:red;font-weight:bold;"> Wieso nicht HOST_NAME_MAX?</span>
+        perror(&quot;gethostname&quot;);
+        exit(EXIT_FAILURE);
+    }
+    
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, PATH_MAX) == NULL) {
+        perror(&quot;getcwd&quot;);
+        exit(EXIT_FAILURE);
+    }
+    
+    char cmd[256];
+    char arg[256];
+    while (true) {
+        printf(&quot;%s@%s %s $ &quot;, p-&gt;pw_name, hostname, cwd);
+        errno = 0;
+        int ret = scanf(&quot;%255s %255s&quot;, cmd, arg);
+        if (ret == 2) {
+            printf(&quot;Befehl: %s\nArgument: %s\n&quot;, cmd, arg);
+        } else {
+            if (errno != 0) {
+                perror(&quot;scanf&quot;);
+                exit(EXIT_FAILURE);
+            }
+            printf(&quot;Es muss genau ein Kommando und ein Parameter angegeben werden.\n&quot;);
+        }
+    }
+    return EXIT_SUCCESS;
+}
+
+
+
+<span style="color:red;font-weight:bold;">//MK</span>
+
+</span></pre>
+</body></html>

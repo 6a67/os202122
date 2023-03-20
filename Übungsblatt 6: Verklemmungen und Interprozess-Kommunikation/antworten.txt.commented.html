@@ -1,0 +1,190 @@
+<html><body><pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">Aufgabe 1
+
+1. Bei einem Deadlock warten die Prozesse mit Betriebssystemmitteln aufeinander, sodass die Prozesse nicht mehr als Runnable gelten und damit auch keine Prozessorauslastung verursachen.
+Bei einem Livelock wird aktives warten benutzt, wodurch eine hohe Prozessorauslastung entsteht, die das gesammte System in mitleidenschaft ziehen kann, was schlimmer ist als ein Deadlock.
+
+2.
+
+synchron:
+Vorteile:
+- Das Erhalten der Nachricht ist immer gew&auml;hleistet, wenn der Aufruf fehlerfrei zur&uuml;ckkehrt ist.
+- Die Nachricht muss nicht zwischengespeichert werden.
+Nachteile:
+- Beim Warten auf eine Nachricht bzw. beim Warten, dass eine Nachricht empfangen wird, kann der Prozess nichts anderes tun.
+
+
+asynchron:
+Vorteile:
+- Prozesse k&ouml;nnen andere Dinge tun und dazwischen auf neue Nachrichten pr&uuml;fen bzw. senden.
+Nachteile:
+- Die Nachrichten m&uuml;ssen immer zwischengespeichert werden.
+- Es ist f&uuml;r den Sender nicht klar, wann die Nachricht empfangen wird, wenn der Empf&auml;nger nicht eine entsprechende Nachricht zur&uuml;cksendet.
+
+
+3. Der gew&uuml;nschte Effekt ist, dass das Signal SIGKILL ignoriert wird, der Prozess also nicht von Au&szlig;en beendet werden kann.
+Unter Linux kann SIGKILL nicht ignoriert werden, der Aufruf tut also nichts.
+
+<span style="color:red;font-weight:bold;">3 P</span>
+
+
+Aufgabe 2
+
+1. 
+
+Die 4 Ressourcen sind B1 bis B4, die Prozesse P1 bis P3.
+B1 -&gt; P1
+B2 -&gt; P1
+B3 -&gt; P2
+P3 -&gt; B4
+In dieser Situation h&auml;tten P3 und P2 nicht mehr gen&uuml;gend Resourcen, um weitermachen zu k&ouml;nnen.
+<span style="color:red;font-weight:bold;">P1 hat ja zwei Resourcen, w&uuml;rde also durchlaufen und damit 2 Resource freigeben. Dann haben P2 und P3 auch genug
+Resourcen um problemlos weitermachen zu k&ouml;nnen. Die gesuchte kritische Situation w&auml;re:</span></span><span style="font-family: monospace; font-size:medium;"><span style="color:red;font-weight:bold;"> (-1 P)
+</span></span></pre>
+<div class="standard" id="magicparlabel-2351">
+	<span style="color:red;font-weight:bold;">r1 -&gt; P1</span></div>
+<div class="standard" id="magicparlabel-2352">
+	<span style="color:red;font-weight:bold;">r2 -&gt; P2</span></div>
+<div class="standard" id="magicparlabel-2353">
+	<span style="color:red;font-weight:bold;">r3 -&gt; P3</span></div>
+<div class="standard" id="magicparlabel-2354">
+	<span style="color:red;font-weight:bold;">P1 -&gt; r4</span></div>
+<div class="standard" id="magicparlabel-2355">
+	<span style="color:red;font-weight:bold;">P2 -&gt; r4</span></div>
+<div class="standard" id="magicparlabel-2356">
+	<span style="color:red;font-weight:bold;">P3 -&gt; r4</span></div>
+<pre class="autowrap">
+</pre>
+<style type="text/css">
+div.standard {
+	text-indent: 2em;
+	margin-bottom: 2ex;</style>
+<pre class="autowrap">
+<span style="font-family: monospace; font-size:medium;">
+
+2.
+Es kann kein Deadlock entstehen, weil immer genug Ressoucen da sind, sodass mindestens ein Prozess seine Arbeit erledingen kann und damit weitere Ressoucen frei werden. Wenn alle 3 prozesse jeweils eine Ressource benutzen ist immer noch eine frei, damit ein Prozess seine Arbeit beenden kann.
+
+
+<span style="color:red;font-weight:bold;">2 P</span>
+
+
+Aufgabe 3
+
+1.
+
+Frei:
+A 1
+B 5
+C 2
+D 0
+
+P0 kann laufen.
+
+Frei:
+A 1
+B 5
+C 3
+D 2
+
+
+P3 kann laufen.
+
+Frei:
+A 1
+B 11
+C 6
+D 4
+
+
+P1, P2, P4 k&ouml;nnen laufen, P2 gew&auml;hlt.
+
+Frei:
+A 2
+B 14
+C 11
+D 8
+
+
+P1, P4 k&ouml;nnen laufen, P1 gew&auml;hlt.
+
+Frei:
+A 3
+B 14
+C 11
+D 8
+
+
+P4 kann laufen.
+
+
+Frei:
+A 3
+B 14
+C 12
+D 12
+
+
+2.
+<span style="color:red;font-weight:bold;">Startkonfiguration fehlt (-2 P)</span>
+<span style="color:red;font-weight:bold;">Ich vermute mal ihr habe die 5, 2 auf die max. Nachforderung von P1
+aufaddiert. Eigentlich sollten die Werten auf Zugewiesen addiert werden und
+somit von max. Nachforderung abgezogen werden.</span>
+
+Frei:
+A 1
+B 5
+C 2
+D 0
+
+P0 kann laufen.
+
+Frei:
+A 1
+B 5
+C 3
+D 2
+
+
+P3 kann laufen.
+
+Frei:
+A 1
+B 11
+C 6
+D 4
+
+
+P2, P4 k&ouml;nnen laufen, P2 gew&auml;hlt.
+
+Frei:
+A 2
+B 14
+C 11
+D 8
+
+
+P4 kann laufen.
+
+Frei:
+A 2
+B 14
+C 12
+D 12
+
+P1 kann laufen. <span style="color:red;font-weight:bold;">Warum kann P1 erst jetzt laufen?
+wenn ich mit meiner Vermutung richtig liege, m&uuml;sste P1 (0, 12, 7, 0) ben&ouml;tigen.
+Damit k&ouml;nnte P1 auch dann laufen, wann ihr P4 eingeplant habt.
+</span>
+Frei:
+A 3
+B 14
+C 12
+D 12
+ 
+<span style="color:red;font-weight:bold;">5 P</span>
+
+</span></pre>
+<p>
+	<span style="color:red;font-weight:bold;">MLD</span></p>
+</body></html>
